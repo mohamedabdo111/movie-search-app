@@ -3,13 +3,13 @@ import SearchInput from "@/components/searchInput";
 import { Movie } from "@/types/type";
 import axios from "axios";
 
-interface HomeProps {
-  params: {};
+export default async function Home({
+  searchParams,
+}: {
   searchParams: {
     search?: string;
   };
-}
-export default async function Home({ searchParams }: HomeProps) {
+}) {
   const query = searchParams.search || "avengers";
   const getMovies = await axios.get(`${process.env.NEXT_BASE_URL}&s=${query}`);
   const movies = getMovies?.data;

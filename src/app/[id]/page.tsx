@@ -2,16 +2,14 @@ import axios from "axios";
 import { Star, Clock, Award, Calendar, Globe, Film } from "lucide-react";
 import Image from "next/image";
 
-interface PageProps {
+export default async function MovieDetails({
+  params: { id },
+}: {
   params: {
     id: string;
   };
-  searchParams: {};
-}
-
-export default async function MovieDetails({ params }: PageProps) {
-  const { id } = params;
-
+}) {
+  // const { id } = params;
   const getDetails = await axios.get(`${process.env.NEXT_BASE_URL}&t=${id}`);
   const movieDetails = getDetails?.data;
   return (
