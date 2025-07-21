@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-
 export default function Card({
   title,
   poster,
@@ -13,11 +12,12 @@ export default function Card({
   Year: string;
   Type: string;
 }) {
+  const isImageFound = poster === "N/A" ? "/no-image.png" : poster;
   return (
     <Link href={`/${title}`} className="group relative block bg-black">
       <Image
         alt={title}
-        src={poster}
+        src={isImageFound}
         width={500}
         height={500}
         className="absolute inset-0 h-full w-full object-cover opacity-75 transition-opacity group-hover:opacity-50"

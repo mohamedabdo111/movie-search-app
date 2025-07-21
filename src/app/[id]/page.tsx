@@ -13,13 +13,16 @@ export default async function MovieDetails({ params }: PageProps) {
 
   const getDetails = await axios.get(`${process.env.NEXT_BASE_URL}&t=${id}`);
   const movieDetails = getDetails?.data;
+
+  const isImageFound =
+    movieDetails?.Poster === "N/A" ? "/no-image.png" : movieDetails?.Poster;
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-70 z-10" />
         <Image
-          src={movieDetails?.Poster}
+          src={isImageFound}
           alt={movieDetails?.Title}
           fill
           className="object-cover opacity-50"
@@ -28,29 +31,25 @@ export default async function MovieDetails({ params }: PageProps) {
 
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-20">
           <h1 className="text-4xl md:text-6xl font-bold mb-2">
-            {movieDetails?.Title}
+            {movieDetails?.Title || "Movie Title Not Found"}
           </h1>
           <div className="flex flex-wrap items-center gap-3 text-sm md:text-base text-gray-300">
             <span className="flex items-center">
-              <Calendar className="h-4 w-4 mr-1" /> {movieDetails?.Year}
+              <Calendar className="h-4 w-4 mr-1" />{" "}
+              {movieDetails?.Year || "Year Not Available"}
             </span>
             <span>•</span>
             <span className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
-              {movieDetails?.Runtime}
+              {movieDetails?.Runtime || "Runtime Not Available"}
             </span>
             <span>•</span>
             <span>{movieDetails?.Rated}</span>
             <span>•</span>
             <div className="flex flex-wrap gap-2">
-              {["Action", "Crime", "Drama"].map((genre) => (
-                <span
-                  key={genre}
-                  className="px-2 py-1 text-xs border border-gray-500 rounded-md bg-transparent text-gray-300 hover:bg-gray-800 transition-colors"
-                >
-                  {genre}
-                </span>
-              ))}
+              <span className="px-2 py-1 text-xs border border-gray-500 rounded-md bg-transparent text-gray-300 hover:bg-gray-800 transition-colors">
+                {movieDetails?.Genre || "Genre Not Available"}
+              </span>
             </div>
           </div>
         </div>
@@ -62,8 +61,8 @@ export default async function MovieDetails({ params }: PageProps) {
             <div className="sticky top-8">
               <div className="relative aspect-[2/3] w-full max-w-[300px] mx-auto md:mx-0 overflow-hidden rounded-lg shadow-2xl mb-6">
                 <Image
-                  src={movieDetails?.Poster}
-                  alt={movieDetails?.Title}
+                  src={isImageFound}
+                  alt={movieDetails?.Title || "Movie Poster"}
                   fill
                   className="object-cover"
                 />
@@ -77,17 +76,19 @@ export default async function MovieDetails({ params }: PageProps) {
                         className="h-5 w-5 text-yellow-500 mr-2"
                         fill="currentColor"
                       />
-                      <span className="font-bold text-xl">8.2/10</span>
+                      <span className="font-bold text-xl">
+                        {movieDetails?.Ratings.Value || "no rating"}
+                      </span>
                     </div>
                     <span className="text-gray-400 text-sm">
-                      1,652,636 votes
+                      {movieDetails?.imdbVotes || "no votes"}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="bg-green-800 text-white font-bold px-2 py-1 rounded mr-2 text-sm">
-                        70
+                        {movieDetails?.Metascore || "N/A"}
                       </div>
                       <span>Metascore</span>
                     </div>
@@ -225,23 +226,14 @@ export default async function MovieDetails({ params }: PageProps) {
                     </span>
                     <p className="text-white">140 minutes</p>
                   </div>
-                  <div>
-                    <span className="text-gray-400 text-sm block mb-1">
-                      Rating
-                    </span>
-                    <p className="text-white">PG-13</p>
-                  </div>
-                  <div>
-                    <span className="text-gray-400 text-sm block mb-1">
-                      IMDb Rating
-                    </span>
-                    <p className="text-white font-semibold">8.2/10</p>
-                  </div>
+
                   <div>
                     <span className="text-gray-400 text-sm block mb-1">
                       Metascore
                     </span>
-                    <p className="text-white font-semibold">70/100</p>
+                    <p className="text-white font-semibold">
+                      {movieDetails?.Metascore}/100
+                    </p>
                   </div>
                 </div>
               </div>
