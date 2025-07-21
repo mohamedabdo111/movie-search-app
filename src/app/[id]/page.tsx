@@ -1,28 +1,55 @@
 import axios from "axios";
 import { Star, Clock, Award, Calendar, Globe, Film } from "lucide-react";
 import Image from "next/image";
-
+interface MovieDetailss {
+  Title: string;
+  Year: string;
+  Rated: string;
+  Released: string;
+  Runtime: string;
+  Genre: string;
+  Director: string;
+  Writer: string;
+  Actors: string;
+  Plot: string;
+  Language: string;
+  Country: string;
+  Awards: string;
+  Poster: string;
+  Ratings: {
+    Source: string;
+    Value: string;
+  }[];
+  Metascore: string;
+  imdbRating: string;
+  imdbVotes: string;
+  imdbID: string;
+  Type: string;
+  DVD: string;
+  BoxOffice: string;
+  Production: string;
+  Website: string;
+  Response: string;
+}
 interface PageProps {
   params: {
     id: string;
   };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 export default async function MovieDetails({ params }: PageProps) {
   const { id } = params;
 
   const getDetails = await axios.get(`${process.env.NEXT_BASE_URL}&t=${id}`);
-  const movieDetails = getDetails?.data;
-
-  const isImageFound =
-    movieDetails?.Poster === "N/A" ? "/no-image.png" : movieDetails?.Poster;
+  const movieDetails: MovieDetailss = getDetails?.data;
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-70 z-10" />
         <Image
-          src={isImageFound}
+          src={movieDetails?.Poster}
           alt={movieDetails?.Title}
           fill
           className="object-cover opacity-50"
@@ -31,25 +58,29 @@ export default async function MovieDetails({ params }: PageProps) {
 
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-20">
           <h1 className="text-4xl md:text-6xl font-bold mb-2">
-            {movieDetails?.Title || "Movie Title Not Found"}
+            {movieDetails?.Title}
           </h1>
           <div className="flex flex-wrap items-center gap-3 text-sm md:text-base text-gray-300">
             <span className="flex items-center">
-              <Calendar className="h-4 w-4 mr-1" />{" "}
-              {movieDetails?.Year || "Year Not Available"}
+              <Calendar className="h-4 w-4 mr-1" /> {movieDetails?.Year}
             </span>
             <span>•</span>
             <span className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
-              {movieDetails?.Runtime || "Runtime Not Available"}
+              {movieDetails?.Runtime}
             </span>
             <span>•</span>
             <span>{movieDetails?.Rated}</span>
             <span>•</span>
             <div className="flex flex-wrap gap-2">
-              <span className="px-2 py-1 text-xs border border-gray-500 rounded-md bg-transparent text-gray-300 hover:bg-gray-800 transition-colors">
-                {movieDetails?.Genre || "Genre Not Available"}
-              </span>
+              {["Action", "Crime", "Drama"].map((genre) => (
+                <span
+                  key={genre}
+                  className="px-2 py-1 text-xs border border-gray-500 rounded-md bg-transparent text-gray-300 hover:bg-gray-800 transition-colors"
+                >
+                  {genre}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -61,8 +92,8 @@ export default async function MovieDetails({ params }: PageProps) {
             <div className="sticky top-8">
               <div className="relative aspect-[2/3] w-full max-w-[300px] mx-auto md:mx-0 overflow-hidden rounded-lg shadow-2xl mb-6">
                 <Image
-                  src={isImageFound}
-                  alt={movieDetails?.Title || "Movie Poster"}
+                  src={movieDetails?.Poster}
+                  alt={movieDetails?.Title}
                   fill
                   className="object-cover"
                 />
@@ -76,19 +107,17 @@ export default async function MovieDetails({ params }: PageProps) {
                         className="h-5 w-5 text-yellow-500 mr-2"
                         fill="currentColor"
                       />
-                      <span className="font-bold text-xl">
-                        {movieDetails?.Ratings.Value || "no rating"}
-                      </span>
+                      <span className="font-bold text-xl">8.2/10</span>
                     </div>
                     <span className="text-gray-400 text-sm">
-                      {movieDetails?.imdbVotes || "no votes"}
+                      1,652,636 votes
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="bg-green-800 text-white font-bold px-2 py-1 rounded mr-2 text-sm">
-                        {movieDetails?.Metascore || "N/A"}
+                        70
                       </div>
                       <span>Metascore</span>
                     </div>
@@ -226,14 +255,23 @@ export default async function MovieDetails({ params }: PageProps) {
                     </span>
                     <p className="text-white">140 minutes</p>
                   </div>
-
+                  <div>
+                    <span className="text-gray-400 text-sm block mb-1">
+                      Rating
+                    </span>
+                    <p className="text-white">PG-13</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 text-sm block mb-1">
+                      IMDb Rating
+                    </span>
+                    <p className="text-white font-semibold">8.2/10</p>
+                  </div>
                   <div>
                     <span className="text-gray-400 text-sm block mb-1">
                       Metascore
                     </span>
-                    <p className="text-white font-semibold">
-                      {movieDetails?.Metascore}/100
-                    </p>
+                    <p className="text-white font-semibold">70/100</p>
                   </div>
                 </div>
               </div>
