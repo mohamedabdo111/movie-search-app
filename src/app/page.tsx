@@ -4,6 +4,7 @@ import { Movie } from "@/types/type";
 import axios from "axios";
 
 interface HomeProps {
+  params: {};
   searchParams: {
     search?: string;
   };

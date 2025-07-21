@@ -2,68 +2,31 @@ import axios from "axios";
 import { Star, Clock, Award, Calendar, Globe, Film } from "lucide-react";
 import Image from "next/image";
 
-interface MovieDetails {
-  Title: string;
-  Year: string;
-  Rated: string;
-  Released: string;
-  Runtime: string;
-  Genre: string;
-  Director: string;
-  Writer: string;
-  Actors: string;
-  Plot: string;
-  Language: string;
-  Country: string;
-  Awards: string;
-  Poster: string;
-  Ratings: {
-    Source: string;
-    Value: string;
-  }[];
-  Metascore: string;
-  imdbRating: string;
-  imdbVotes: string;
-  imdbID: string;
-  Type: string;
-  DVD: string;
-  BoxOffice: string;
-  Production: string;
-  Website: string;
-  Response: string;
-}
-
 interface PageProps {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+  };
+  searchParams: {};
 }
 
 export default async function MovieDetails({ params }: PageProps) {
-  const { id } = await params;
+  const { id } = params;
 
-  const response = await axios.get(`${process.env.NEXT_BASE_URL}&t=${id}`);
-  const movieDetails: MovieDetails = await response.data;
-
-  const genres = movieDetails?.Genre ? movieDetails.Genre.split(", ") : [];
-
-  const imdbRating = movieDetails?.imdbRating || "N/A";
-  const imdbVotes = movieDetails?.imdbVotes || "N/A";
-  const metascore = movieDetails?.Metascore || "N/A";
-
+  const getDetails = await axios.get(`${process.env.NEXT_BASE_URL}&t=${id}`);
+  const movieDetails = getDetails?.data;
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-70 z-10" />
         <Image
-          src={movieDetails?.Poster || "/placeholder.svg?height=600&width=400"}
-          alt={movieDetails?.Title || "Movie poster"}
+          src={movieDetails?.Poster}
+          alt={movieDetails?.Title}
           fill
           className="object-cover opacity-50"
           priority
         />
+
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-20">
           <h1 className="text-4xl md:text-6xl font-bold mb-2">
             {movieDetails?.Title}
@@ -81,7 +44,7 @@ export default async function MovieDetails({ params }: PageProps) {
             <span>{movieDetails?.Rated}</span>
             <span>•</span>
             <div className="flex flex-wrap gap-2">
-              {genres.map((genre) => (
+              {["Action", "Crime", "Drama"].map((genre) => (
                 <span
                   key={genre}
                   className="px-2 py-1 text-xs border border-gray-500 rounded-md bg-transparent text-gray-300 hover:bg-gray-800 transition-colors"
@@ -100,11 +63,8 @@ export default async function MovieDetails({ params }: PageProps) {
             <div className="sticky top-8">
               <div className="relative aspect-[2/3] w-full max-w-[300px] mx-auto md:mx-0 overflow-hidden rounded-lg shadow-2xl mb-6">
                 <Image
-                  src={
-                    movieDetails?.Poster ||
-                    "/placeholder.svg?height=450&width=300"
-                  }
-                  alt={movieDetails?.Title || "Movie poster"}
+                  src={movieDetails?.Poster}
+                  alt={movieDetails?.Title}
                   fill
                   className="object-cover"
                 />
@@ -118,22 +78,21 @@ export default async function MovieDetails({ params }: PageProps) {
                         className="h-5 w-5 text-yellow-500 mr-2"
                         fill="currentColor"
                       />
-                      <span className="font-bold text-xl">{imdbRating}/10</span>
+                      <span className="font-bold text-xl">8.2/10</span>
                     </div>
                     <span className="text-gray-400 text-sm">
-                      {imdbVotes} votes
+                      1,652,636 votes
                     </span>
                   </div>
-                  {metascore !== "N/A" && (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="bg-green-800 text-white font-bold px-2 py-1 rounded mr-2 text-sm">
-                          {metascore}
-                        </div>
-                        <span>Metascore</span>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="bg-green-800 text-white font-bold px-2 py-1 rounded mr-2 text-sm">
+                        70
                       </div>
+                      <span>Metascore</span>
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
 
@@ -145,28 +104,29 @@ export default async function MovieDetails({ params }: PageProps) {
                     </h3>
                     <p className="text-white">{movieDetails?.Released}</p>
                   </div>
+
                   <div>
                     <h3 className="text-gray-400 text-sm font-medium mb-1">
                       Country
                     </h3>
                     <p className="text-white">{movieDetails?.Country}</p>
                   </div>
+
                   <div>
                     <h3 className="text-gray-400 text-sm font-medium mb-1">
                       Language
                     </h3>
-                    <p className="text-white">{movieDetails?.Language}</p>
+                    <p className="text-white">{movieDetails.Language}</p>
                   </div>
-                  {movieDetails?.BoxOffice && (
-                    <div>
-                      <h3 className="text-gray-400 text-sm font-medium mb-1">
-                        Box Office
-                      </h3>
-                      <p className="text-white font-semibold">
-                        {movieDetails.BoxOffice}
-                      </p>
-                    </div>
-                  )}
+
+                  <div>
+                    <h3 className="text-gray-400 text-sm font-medium mb-1">
+                      Box Office
+                    </h3>
+                    <p className="text-white font-semibold">
+                      {movieDetails?.BoxOffice}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -176,7 +136,7 @@ export default async function MovieDetails({ params }: PageProps) {
             <section className="mb-8">
               <h2 className="text-2xl font-bold mb-4 text-white">Overview</h2>
               <p className="text-gray-300 text-lg leading-relaxed">
-                {movieDetails?.Plot || "No plot information available."}
+                {movieDetails?.Plot || ""}
               </p>
             </section>
 
@@ -186,6 +146,7 @@ export default async function MovieDetails({ params }: PageProps) {
               <h2 className="text-2xl font-bold mb-6 text-white">
                 Cast & Crew
               </h2>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
                   <h3 className="text-gray-400 text-sm font-medium mb-2">
@@ -195,12 +156,14 @@ export default async function MovieDetails({ params }: PageProps) {
                     {movieDetails?.Director}
                   </p>
                 </div>
+
                 <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
                   <h3 className="text-gray-400 text-sm font-medium mb-2">
                     Writers
                   </h3>
                   <p className="text-white">{movieDetails?.Writer}</p>
                 </div>
+
                 <div className="bg-gray-900 p-4 rounded-lg border border-gray-800 sm:col-span-2 lg:col-span-1">
                   <h3 className="text-gray-400 text-sm font-medium mb-2">
                     Stars
@@ -233,17 +196,18 @@ export default async function MovieDetails({ params }: PageProps) {
                   <Film className="h-5 w-5 mr-3 text-gray-400 flex-shrink-0" />
                   <div>
                     <span className="text-gray-400 text-sm block">Type</span>
-                    <p className="text-white font-medium capitalize">
-                      {movieDetails?.Type || "Movie"}
+                    <p className="text-white font-medium">
+                      {movieDetails?.Type || "No type information available."}
                     </p>
                   </div>
                 </div>
+
                 <div className="bg-gray-900 p-4 rounded-lg border border-gray-800 flex items-center">
                   <Globe className="h-5 w-5 mr-3 text-gray-400 flex-shrink-0" />
                   <div>
                     <span className="text-gray-400 text-sm block">IMDB ID</span>
                     <p className="text-white font-medium">
-                      {movieDetails?.imdbID || "N/A"}
+                      {movieDetails?.imdbID || ""}
                     </p>
                   </div>
                 </div>
@@ -260,32 +224,26 @@ export default async function MovieDetails({ params }: PageProps) {
                     <span className="text-gray-400 text-sm block mb-1">
                       Runtime
                     </span>
-                    <p className="text-white">
-                      {movieDetails?.Runtime || "N/A"}
-                    </p>
+                    <p className="text-white">140 minutes</p>
                   </div>
                   <div>
                     <span className="text-gray-400 text-sm block mb-1">
                       Rating
                     </span>
-                    <p className="text-white">{movieDetails?.Rated || "N/A"}</p>
+                    <p className="text-white">PG-13</p>
                   </div>
                   <div>
                     <span className="text-gray-400 text-sm block mb-1">
                       IMDb Rating
                     </span>
-                    <p className="text-white font-semibold">{imdbRating}/10</p>
+                    <p className="text-white font-semibold">8.2/10</p>
                   </div>
-                  {metascore !== "N/A" && (
-                    <div>
-                      <span className="text-gray-400 text-sm block mb-1">
-                        Metascore
-                      </span>
-                      <p className="text-white font-semibold">
-                        {metascore}/100
-                      </p>
-                    </div>
-                  )}
+                  <div>
+                    <span className="text-gray-400 text-sm block mb-1">
+                      Metascore
+                    </span>
+                    <p className="text-white font-semibold">70/100</p>
+                  </div>
                 </div>
               </div>
             </section>
