@@ -2,15 +2,13 @@ import axios from "axios";
 import { Star, Clock, Award, Calendar, Globe, Film } from "lucide-react";
 import Image from "next/image";
 
-export default async function MovieDetails({
-  params: { id },
+export default async function Page({
+  params,
 }: {
-  params: {
-    id: string;
-  };
+  params: Promise<{ slug: string }>
 }) {
-  // const { id } = params;
-  const getDetails = await axios.get(`${process.env.NEXT_BASE_URL}&t=${id}`);
+  const { slug } = await params;
+  const getDetails = await axios.get(`${process.env.NEXT_BASE_URL}&t=${slug}`);
   const movieDetails = getDetails?.data;
   return (
     <div className="min-h-screen bg-black text-white">

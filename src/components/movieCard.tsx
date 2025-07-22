@@ -14,7 +14,7 @@ export default function Card({
 }) {
   const isImageFound = poster === "N/A" ? "/no-image.png" : poster;
   return (
-    <Link href={`/${title}`} className="group relative block bg-black">
+    <Link href={`details/${title}`} className="group relative block bg-black">
       <Image
         alt={title}
         src={isImageFound}
